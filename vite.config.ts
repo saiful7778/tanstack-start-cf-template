@@ -9,9 +9,14 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
+  server: { port: 3000 },
+  preview: { port: 4173 },
   plugins: [
     devtools(),
-    cloudflare({ viteEnvironment: { name: 'ssr' } }),
+    cloudflare({
+      viteEnvironment: { name: 'ssr' },
+      persistState: { path: '.wrangler' },
+    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

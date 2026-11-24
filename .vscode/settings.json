@@ -1,8 +1,23 @@
 {
+  "tailwindCSS.experimental.configFile": "src/globals.css",
+  "tailwindCSS.emmetCompletions": false,
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "ts"
+  },
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib",
+  "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
+  "js/ts.tsserver.maxMemory": 2048,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.watcherExclude": {
+    "**/dist/**": true,
+    "**/node_modules/**": true,
+    "**/coverage/**": true,
     "**/routeTree.gen.ts": true
   },
   "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/pnpm-lock.yaml": true,
     "**/routeTree.gen.ts": true
   },
   "files.readonlyInclude": {
