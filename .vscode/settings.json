@@ -22,5 +22,8 @@
   },
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
+  },
+  "files.associations": {
+    ".graphifyignore": "ignore"
   }
 }
