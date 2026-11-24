@@ -1,0 +1,119 @@
+import { useCallback, type ComponentProps } from "react";
+
+import type { FileRoutesById, FileRouteTypes } from "#/routeTree.gen";
+import { getRouteApi } from "@tanstack/react-router";
+import { cn } from "cn";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+
+/** All route IDs from the generated route tree (API and __root__ routes excluded) */
+export type RouteId = Exclude<
+  FileRouteTypes["id"],
+  "__root__" | `/api/${string}`
+>;
+
+/** Fully-resolved search schema (own + parent routes) for a given route id */
+export type SearchOf<TId extends RouteId> =
+  FileRoutesById[TId]["types"]["fullSearchSchema"];
+
+interface TabNavigationProps<TId extends RouteId> {
+  paramName?: string;
+  routeId: TId;
+  defaultTab: string;
+  children: React.ReactNode;
+}
+
+/**
+ * URL-driven tabs powered by TanStack Router search params.
+ *
+ * The active tab is read from and written to a single search param so that
+ * the tab state is bookmarkable, shareable, and survives full-page refreshes.
+ * When the active tab equals `defaultTab` the param is omitted from the URL
+ * to keep links clean.
+ *
+ * @example
+ * ```tsx
+ * <TabNavigation paramName="tab" defaultTab="overview">
+ *   <TabNavigationList>
+ *     <TabNavigationTrigger value="overview">Overview</TabNavigationTrigger>
+ *     <TabNavigationTrigger value="settings">Settings</TabNavigationTrigger>
+ *   </TabNavigationList>
+ *   <TabNavigationContent value="overview">…</TabNavigationContent>
+ *   <TabNavigationContent value="settings">…</TabNavigationContent>
+ * </TabNavigation>
+ * ```
+ */
+export function TabNavigation<const TId extends RouteId>({
+  paramName = "tab",
+  defaultTab,
+  children,
+  routeId,
+}: TabNavigationProps<TId>) {
+  const route = getRouteApi(routeId);
+  const search = route.useSearch();
+  const navigate = route.useNavigate();
+
+  const value = String(
+    (search as Record<string, unknown>)[paramName] ?? defaultTab
+  );
+
+  const handleTabChange = useCallback(
+    (next: string) => {
+      const searchValue = (prev: SearchOf<TId>) => {
+        return Object.assign({}, prev, { [paramName]: next }) as SearchOf<TId>;
+      };
+
+      void (navigate as (opts: unknown) => Promise<void>)({
+        to: ".",
+        search: searchValue,
+      });
+    },
+    [navigate, paramName]
+  );
+
+  return (
+    <Tabs value={value} onValueChange={handleTabChange}>
+      {children}
+    </Tabs>
+  );
+}
+
+export function TabNavigationList({
+  className,
+  variant = "default",
+  ...props
+}: ComponentProps<typeof TabsList>) {
+  return (
+    <div
+      data-variant={variant}
+      className="group-data-horizontal/tabs:overflow-x-auto group-data-horizontal/tabs:overflow-y-hidden group-data-horizontal/tabs:data-[variant=line]:border-b group-data-vertical/tabs:data-[variant=line]:border-r"
+    >
+      <TabsList
+        variant={variant}
+        className={cn("data-[variant=line]:p-0", className)}
+        {...props}
+      />
+    </div>
+  );
+}
+
+export function TabNavigationTrigger({
+  className,
+  ...props
+}: ComponentProps<typeof TabsTrigger>) {
+  return (
+    <TabsTrigger
+      className={cn(
+        "cursor-pointer text-sm group-data-horizontal/tabs:group-data-[variant=line]/tabs-list:rounded-b-none group-data-vertical/tabs:group-data-[variant=line]/tabs-list:rounded-r-none group-data-[variant=line]/tabs-list:after:bottom-0 group-data-vertical/tabs:group-data-[variant=line]/tabs-list:after:right-0! group-data-[variant=line]/tabs-list:data-active:bg-muted!",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+export function TabNavigationContent(
+  props: ComponentProps<typeof TabsContent>
+) {
+  return <TabsContent {...props} />;
+}
