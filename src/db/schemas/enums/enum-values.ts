@@ -21,3 +21,36 @@ export const USER_EVENT_TYPE = [
   "device.new_detected",
   "admin.impersonation",
 ] as const;
+
+export const EMAIL_DIRECTION = ["outbound", "inbound", "web_form"] as const;
+export const EMAIL_STATUS = [
+  "draft",
+  "queued",
+  "sent",
+  "received",
+  "delivered",
+  "delivery_delayed",
+  "bounced",
+  "complained",
+  "suppressed",
+  "failed",
+] as const;
+export const EMAIL_EVENT_TYPE = [
+  "email.sent",
+  "email.delivered",
+  "email.delivery_delayed",
+  "email.bounced",
+  "email.complained",
+  "email.opened",
+  "email.clicked",
+  "email.unsubscribed",
+  "email.rejected",
+] as const;
+export const EMAIL_RECIPIENT_TYPE = [
+  "to",
+  "cc",
+  "bcc",
+  "reply_to",
+  "from",
+  "received_for",
+] as const;

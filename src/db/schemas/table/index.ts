@@ -1,3 +1,4 @@
+export * from "./email";
 export * from "./role-permission";
 export * from "./user";
 export * from "./account.table";

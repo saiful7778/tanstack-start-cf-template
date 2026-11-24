@@ -1,0 +1,61 @@
+import { db_created_at, db_id } from "#/db/utils/db-utils";
+import { relations } from "drizzle-orm";
+import { foreignKey, index, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import z from "zod";
+
+import { EmailRecipientTypeEnum } from "../../enums/db-enums";
+import { EmailTable } from "./email.table";
+
+export const EmailRecipientTable = sqliteTable(
+  "email_recipients",
+  {
+    id: db_id,
+    emailId: text("email_id").notNull(),
+    type: EmailRecipientTypeEnum("type").notNull(),
+    email: text("email").notNull(),
+    name: text("name"),
+    createdAt: db_created_at,
+  },
+  (table) => [
+    foreignKey({
+      name: "emailRecipient_email_fkey",
+      columns: [table.emailId],
+      foreignColumns: [EmailTable.id],
+    }).onDelete("cascade"),
+    index("emailRecipient_emailId_idx").on(table.emailId),
+    index("emailRecipient_email_idx").on(table.email),
+    index("emailRecipient_type_idx").on(table.type),
+  ]
+);
+
+export const EmailRecipientRelations = relations(
+  EmailRecipientTable,
+  ({ one }) => ({
+    email: one(EmailTable, {
+      fields: [EmailRecipientTable.emailId],
+      references: [EmailTable.id],
+      relationName: "EmailRecipientToEmail",
+    }),
+  })
+);
+
+export const insertEmailRecipientSchema = createInsertSchema(
+  EmailRecipientTable,
+  {
+    email: z.email(),
+    emailId: z.uuid(),
+  }
+).omit({ id: true, createdAt: true });
+export const selectEmailRecipientSchema = createSelectSchema(
+  EmailRecipientTable,
+  {
+    email: z.email(),
+    id: z.uuid(),
+    emailId: z.uuid(),
+  }
+);
+
+export type EmailRecipientDataModel = typeof EmailRecipientTable.$inferSelect;
+export type InsertEmailRecipient = z.infer<typeof insertEmailRecipientSchema>;
+export type SelectEmailRecipient = z.infer<typeof selectEmailRecipientSchema>;

@@ -20,6 +20,88 @@ table accounts {
   }
 }
 
+table email_attachments {
+  id text [pk, not null]
+  email_id text [not null]
+  filename text [not null]
+  content_type text [not null]
+  content_id text
+  content_disposition text
+  size integer
+  storage_key text
+  url text
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    email_id [name: 'emailAttachment_emailId_idx']
+    content_id [name: 'emailAttachment_contentId_idx']
+  }
+}
+
+table email_recipients {
+  id text [pk, not null]
+  email_id text [not null]
+  type text [not null]
+  email text [not null]
+  name text
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    email_id [name: 'emailRecipient_emailId_idx']
+    email [name: 'emailRecipient_email_idx']
+    type [name: 'emailRecipient_type_idx']
+  }
+}
+
+table emails {
+  id text [pk, not null]
+  thread_id text
+  direction text [not null]
+  status text [not null, default: 'draft']
+  resend_id text
+  resend_message_id text
+  q_message_id text
+  subject text
+  text_body text
+  html_body text
+  headers text
+  metadata text
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+  updated_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    thread_id [name: 'email_emailThreadId_idx']
+    resend_id [name: 'email_resendId_idx', unique]
+    q_message_id [name: 'email_qMessageId_idx', unique]
+    resend_message_id [name: 'email_messageId_idx']
+    direction [name: 'email_direction_idx']
+    status [name: 'email_status_idx']
+    created_at [name: 'email_createdAt_idx']
+  }
+}
+
+table email_threads {
+  id text [pk, not null]
+  subject text [not null]
+  contact_email text [not null]
+  contact_name text
+  is_closed integer [not null, default: 0]
+  closed_at integer
+  closed_by text
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+  updated_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    closed_by [name: 'emailThread_closedBy_idx']
+    contact_email [name: 'emailThread_contactEmail_idx']
+    is_closed [name: 'emailThread_isClosed_idx']
+  }
+}
+
 table permissions {
   id text [pk, not null]
   level text [not null]
@@ -190,6 +272,14 @@ table verifications {
 }
 
 ref: accounts.user_id > users.id
+
+ref: email_attachments.email_id > emails.id
+
+ref: email_recipients.email_id > emails.id
+
+ref: emails.thread_id > email_threads.id
+
+ref: email_threads.closed_by - users.id
 
 ref: role_permissions.role_id > roles.id
 
