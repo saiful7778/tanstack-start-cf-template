@@ -12,11 +12,18 @@ export const env = createEnv({
   skipValidation: process.env.SKIP_ENV_VALIDATION === "true",
   server: {
     ENVIRONMENT: EnvSchema.default("development"),
+    RESEND_API_KEY: z.string().optional(),
+    RESEND_BASE_URL: z.url().optional(),
+    RESEND_INBOUND_WEBHOOK_SECRET: z.string().optional(),
+    RESEND_OUTBOUND_WEBHOOK_SECRET: z.string().optional(),
+    RESEND_EVENT_WEBHOOK_SECRET: z.string().optional(),
   },
   clientPrefix: "VITE_",
   client: {
     VITE_ENVIRONMENT: EnvSchema.default("development"),
     VITE_SITE_URL: z.url(),
+    VITE_SYSTEM_MAIL: z.email(),
+    VITE_SUPPORT_MAIL: z.email(),
   },
   runtimeEnv: typeof window === "undefined" ? process.env : import.meta.env,
   emptyStringAsUndefined: true,
