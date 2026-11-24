@@ -17,6 +17,8 @@ export const env = createEnv({
     RESEND_INBOUND_WEBHOOK_SECRET: z.string().optional(),
     RESEND_OUTBOUND_WEBHOOK_SECRET: z.string().optional(),
     RESEND_EVENT_WEBHOOK_SECRET: z.string().optional(),
+    BETTER_AUTH_SECRET: z.string(),
+    GOOGLE_CLIENT_SECRET: z.string(),
   },
   clientPrefix: "VITE_",
   client: {
@@ -24,6 +26,7 @@ export const env = createEnv({
     VITE_SITE_URL: z.url(),
     VITE_SYSTEM_MAIL: z.email(),
     VITE_SUPPORT_MAIL: z.email(),
+    VITE_GOOGLE_CLIENT_ID: z.string(),
   },
   runtimeEnv: typeof window === "undefined" ? process.env : import.meta.env,
   emptyStringAsUndefined: true,
