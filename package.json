@@ -25,7 +25,21 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:studio:local": "drizzle-kit studio --config=\"drizzle.local.config.ts\"",
+    "db:studio:prod": "drizzle-kit studio --config=\"drizzle.config.ts\"",
+    "db:generate-dbml": "tsx ./src/db/generators/dbml-generator.ts",
+    "db:generate-sql": "tsx ./src/db/generators/sql-generator.ts",
+    "db:generate-full": "pnpm run db:generate && pnpm run db:generate-dbml && pnpm run db:generate-sql",
+    "db:migrate:local": "wrangler d1 migrations apply db-local --local --persist-to=\".wrangler\" --config=\"wrangler.jsonc\"",
+    "db:migrate:stage": "wrangler d1 migrations apply db-stage --remote --env staging --config=\"wrangler.jsonc\"",
+    "db:migrate:prod": "wrangler d1 migrations apply db --remote --env production --config=\"wrangler.jsonc\"",
+    "db:seed:local": "SEED_REMOTE=false WRANGLER_CONFIG_PATH=\"wrangler.seed.jsonc\" WRANGLER_PERSIST_PATH=\".wrangler/v3\" tsx ./src/db/seed/dev-seed/index.ts",
+    "db:seed:stage": "SEED_REMOTE=true SEED_ENV=staging WRANGLER_CONFIG_PATH=\"wrangler.seed.jsonc\" tsx ./src/db/seed/stage-seed/index.ts",
+    "db:seed:prod": "SEED_REMOTE=true SEED_ENV=production WRANGLER_CONFIG_PATH=\"wrangler.seed.jsonc\" tsx ./src/db/seed/prod-seed/index.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -36,8 +50,11 @@
     "@tanstack/react-router": "1.170.46",
     "@tanstack/react-router-devtools": "1.167.4",
     "@tanstack/react-start": "1.169.7",
+    "better-auth": "^1.7.27",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
+    "drizzle-orm": "^0.45.4",
+    "drizzle-zod": "^0.8.3",
     "lucide-react": "^1.78.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -52,6 +69,8 @@
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "@eslint-react/eslint-plugin": "^5.30.6",
+    "@faker-js/faker": "^10.6.0",
+    "@libsql/client": "^0.18.0",
     "@storybook/addon-a11y": "^10.6.8",
     "@storybook/addon-docs": "^10.6.8",
     "@storybook/addon-mcp": "^10.6.8",
@@ -70,6 +89,9 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/browser-playwright": "latest",
     "@vitest/coverage-v8": "latest",
+    "dotenv": "^18.0.10",
+    "drizzle-dbml-generator": "^0.10.0",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9.20.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-storybook": "^10.6.8",
@@ -83,6 +105,7 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "latest",
-    "wrangler": "^4.166.0"
+    "wrangler": "^4.166.0",
+    "zocker": "^3.0.0"
   }
 }
