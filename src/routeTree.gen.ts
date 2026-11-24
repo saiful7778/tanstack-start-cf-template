@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ApiMailResendEventRouteImport } from './routes/api/mail/resend/event'
+import { Route as ApiMailResendInboundRouteImport } from './routes/api/mail/resend/inbound'
+import { Route as ApiMailResendOutboundRouteImport } from './routes/api/mail/resend/outbound'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +25,74 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMailResendEventRoute = ApiMailResendEventRouteImport.update({
+  id: '/api/mail/resend/event',
+  path: '/api/mail/resend/event',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMailResendInboundRoute = ApiMailResendInboundRouteImport.update({
+  id: '/api/mail/resend/inbound',
+  path: '/api/mail/resend/inbound',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMailResendOutboundRoute = ApiMailResendOutboundRouteImport.update({
+  id: '/api/mail/resend/outbound',
+  path: '/api/mail/resend/outbound',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api/mail/resend/event': typeof ApiMailResendEventRoute
+  '/api/mail/resend/inbound': typeof ApiMailResendInboundRoute
+  '/api/mail/resend/outbound': typeof ApiMailResendOutboundRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api/mail/resend/event': typeof ApiMailResendEventRoute
+  '/api/mail/resend/inbound': typeof ApiMailResendInboundRoute
+  '/api/mail/resend/outbound': typeof ApiMailResendOutboundRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/api/mail/resend/event': typeof ApiMailResendEventRoute
+  '/api/mail/resend/inbound': typeof ApiMailResendInboundRoute
+  '/api/mail/resend/outbound': typeof ApiMailResendOutboundRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/api/mail/resend/event'
+    | '/api/mail/resend/inbound'
+    | '/api/mail/resend/outbound'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/about'
+    | '/api/mail/resend/event'
+    | '/api/mail/resend/inbound'
+    | '/api/mail/resend/outbound'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/api/mail/resend/event'
+    | '/api/mail/resend/inbound'
+    | '/api/mail/resend/outbound'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ApiMailResendEventRoute: typeof ApiMailResendEventRoute
+  ApiMailResendInboundRoute: typeof ApiMailResendInboundRoute
+  ApiMailResendOutboundRoute: typeof ApiMailResendOutboundRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +111,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mail/resend/event': {
+      id: '/api/mail/resend/event'
+      path: '/api/mail/resend/event'
+      fullPath: '/api/mail/resend/event'
+      preLoaderRoute: typeof ApiMailResendEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mail/resend/inbound': {
+      id: '/api/mail/resend/inbound'
+      path: '/api/mail/resend/inbound'
+      fullPath: '/api/mail/resend/inbound'
+      preLoaderRoute: typeof ApiMailResendInboundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mail/resend/outbound': {
+      id: '/api/mail/resend/outbound'
+      path: '/api/mail/resend/outbound'
+      fullPath: '/api/mail/resend/outbound'
+      preLoaderRoute: typeof ApiMailResendOutboundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ApiMailResendEventRoute: ApiMailResendEventRoute,
+  ApiMailResendInboundRoute: ApiMailResendInboundRoute,
+  ApiMailResendOutboundRoute: ApiMailResendOutboundRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
