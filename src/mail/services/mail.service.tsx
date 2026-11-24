@@ -37,7 +37,7 @@ type MailTemplateOptions<TProps> = Omit<
   SendMailOption,
   "from" | "subject" | "text" | "html"
 > &
-  Omit<TProps, "supportMail">;
+  Omit<TProps, "appName" | "supportMail">;
 
 export interface IMailService extends IQueueMailService {
   sendWelcomeMail: (
@@ -129,7 +129,11 @@ export class MailService extends QueueMailService implements IMailService {
       `${APP_NAME} <${this.mailConfig.systemMail}>`,
       to,
       `Welcome to ${this.mailConfig.appName}`,
-      <WelcomeMail supportMail={this.mailConfig.supportMail} {...options} />,
+      <WelcomeMail
+        appName={this.mailConfig.appName}
+        supportMail={this.mailConfig.supportMail}
+        {...options}
+      />,
       true,
       options
     );
@@ -144,6 +148,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Verify your email for ${this.mailConfig.appName}`,
       <EmailVerificationMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
@@ -161,6 +166,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Reset your password for ${this.mailConfig.appName}`,
       <ResetPasswordMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
@@ -178,6 +184,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Password changed for ${this.mailConfig.appName}`,
       <PasswordChangedMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
@@ -196,6 +203,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `New device login detected for ${this.mailConfig.appName}`,
       <NewDeviceLoginMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
@@ -213,6 +221,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Suspicious login detected for your ${this.mailConfig.appName} account`,
       <SuspiciousLoginMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
@@ -230,6 +239,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Your role has been changed for ${this.mailConfig.appName}`,
       <RoleChangedMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
@@ -247,6 +257,7 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Your ${this.mailConfig.appName} account has been locked`,
       <AccountLockedMail
+        appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
       />,
