@@ -40,7 +40,9 @@
     "db:seed:local": "SEED_REMOTE=false WRANGLER_CONFIG_PATH=\"wrangler.seed.jsonc\" WRANGLER_PERSIST_PATH=\".wrangler/v3\" tsx ./src/db/seed/dev-seed/index.ts",
     "db:seed:stage": "SEED_REMOTE=true SEED_ENV=staging WRANGLER_CONFIG_PATH=\"wrangler.seed.jsonc\" tsx ./src/db/seed/stage-seed/index.ts",
     "db:seed:prod": "SEED_REMOTE=true SEED_ENV=production WRANGLER_CONFIG_PATH=\"wrangler.seed.jsonc\" tsx ./src/db/seed/prod-seed/index.ts",
-    "email:dev": "email dev --dir=\"src/mail/templates/\" --port=8088"
+    "email:dev": "email dev --dir=\"src/mail/templates/\" --port=8088",
+    "docker:dev:up": "bash scripts/docker-compose-wrapper.sh -f ./infra/docker/docker-compose-dev.yml up -d",
+    "docker:dev:down": "bash scripts/docker-compose-wrapper.sh -f ./infra/docker/docker-compose-dev.yml down"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
