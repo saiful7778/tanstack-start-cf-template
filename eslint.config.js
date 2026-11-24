@@ -1,7 +1,9 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 //  @ts-check
 import eslintReact from "@eslint-react/eslint-plugin";
 import { tanstackConfig } from "@tanstack/eslint-config";
 import pluginReactHooks from "eslint-plugin-react-hooks";
+import storybook from "eslint-plugin-storybook";
 
 export default [
   {
@@ -16,6 +18,7 @@ export default [
       ".output",
       ".wrangler",
       "src/routeTree.gen.ts",
+      "vite.config.ts",
     ],
   },
   ...tanstackConfig,
@@ -35,4 +38,5 @@ export default [
       "@eslint-react/no-array-index-key": "off",
     },
   },
+  ...storybook.configs["flat/recommended"],
 ];

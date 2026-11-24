@@ -1,26 +1,72 @@
-import { defineConfig } from 'vite'
-import { devtools } from '@tanstack/devtools-vite'
+/// <reference types="vitest/config" />
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import { cloudflare } from "@cloudflare/vite-plugin";
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import tailwindcss from "@tailwindcss/vite";
+import { devtools } from "@tanstack/devtools-vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import { playwright } from "@vitest/browser-playwright";
+import { defineConfig } from "vite";
 
-import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { cloudflare } from '@cloudflare/vite-plugin'
+const dirname =
+  typeof __dirname !== "undefined"
+    ? __dirname
+    : path.dirname(fileURLToPath(import.meta.url));
 
+// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const config = defineConfig({
-  resolve: { tsconfigPaths: true },
-  server: { port: 3000 },
-  preview: { port: 4173 },
+  resolve: {
+    tsconfigPaths: true,
+  },
+  server: {
+    port: 3000,
+  },
+  preview: {
+    port: 4173,
+  },
   plugins: [
     devtools(),
     cloudflare({
-      viteEnvironment: { name: 'ssr' },
-      persistState: { path: '.wrangler' },
+      viteEnvironment: {
+        name: "ssr",
+      },
+      persistState: {
+        path: ".wrangler",
+      },
     }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
   ],
-})
-
-export default config
+  test: {
+    projects: [
+      {
+        extends: true,
+        plugins: [
+          // The plugin will run tests for the stories defined in your Storybook config
+          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+          storybookTest({
+            configDir: path.join(dirname, ".storybook"),
+          }),
+        ],
+        test: {
+          name: "storybook",
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [
+              {
+                browser: "chromium",
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+});
+export default config;
