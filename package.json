@@ -17,7 +17,9 @@
     "check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "deploy": "pnpm run build && wrangler deploy",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "commit": "cz",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tanstack/react-devtools": "0.10.15",
