@@ -1,0 +1,35 @@
+import { DashboardShell } from "#/components/dashboard-shell";
+import {
+  DashboardShellDescription,
+  DashboardShellHeader,
+  DashboardShellTitle,
+} from "#/components/dashboard-shell/DashboardShellHeader";
+import { head } from "#/lib/head";
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/dashboard/_dashboardLayout/")({
+  head: ({ match }) =>
+    head({
+      pathname: match.pathname,
+      titleByTemplate: "Dashboard",
+      description: "Manage your dashboard",
+    }),
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const { user } = Route.useRouteContext();
+
+  return (
+    <DashboardShell
+      header={
+        <DashboardShellHeader>
+          <DashboardShellTitle>{`Welcome back, ${user.name}`}</DashboardShellTitle>
+          <DashboardShellDescription>
+            Manage your world and flex your power
+          </DashboardShellDescription>
+        </DashboardShellHeader>
+      }
+    ></DashboardShell>
+  );
+}
