@@ -224,3 +224,4 @@ apps/**/public/swe-worker*
 
 **/__pycache__/
 *storybook.log
+blogs/
