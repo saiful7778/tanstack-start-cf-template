@@ -19,6 +19,7 @@ export default [
       ".wrangler",
       "src/routeTree.gen.ts",
       "vite.config.ts",
+      "vitest.config.ts",
     ],
   },
   ...tanstackConfig,
