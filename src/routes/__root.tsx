@@ -1,4 +1,5 @@
 import { DevPanel } from "#/components/dev-panel";
+import { SerwistProvider } from "#/components/providers/serwist-provider";
 import { ThemeProvider } from "#/components/providers/theme-provider";
 import { TanstackQueryProvider } from "#/components/tanstack-query/tanstack-query-provider";
 import { TooltipProvider } from "#/components/ui/tooltip";
@@ -44,42 +45,44 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <TanstackQueryProvider queryClient={context.queryClient}>
-          <ThemeProvider defaultTheme="system" storageKey="theme">
-            <TooltipProvider>{children}</TooltipProvider>
-            <DevPanel
-              currentEnv={env.VITE_ENVIRONMENT}
-              envVars={Object.entries(import.meta.env)
-                .filter(([k]) => k.startsWith("VITE_"))
-                .map(([key, value]) => ({ key, value: value ?? "" }))}
-            />
-            <Toaster
-              position="top-center"
-              reverseOrder={true}
-              gutter={6}
-              toastOptions={{
-                duration: 3000,
-                removeDelay: 2000,
-                className: "__react-hot-toast",
+        <SerwistProvider>
+          <TanstackQueryProvider queryClient={context.queryClient}>
+            <ThemeProvider defaultTheme="system" storageKey="theme">
+              <TooltipProvider>{children}</TooltipProvider>
+              <DevPanel
+                currentEnv={env.VITE_ENVIRONMENT}
+                envVars={Object.entries(import.meta.env)
+                  .filter(([k]) => k.startsWith("VITE_"))
+                  .map(([key, value]) => ({ key, value: value ?? "" }))}
+              />
+              <Toaster
+                position="top-center"
+                reverseOrder={true}
+                gutter={6}
+                toastOptions={{
+                  duration: 3000,
+                  removeDelay: 2000,
+                  className: "__react-hot-toast",
+                }}
+              />
+            </ThemeProvider>
+            <TanStackDevtools
+              config={{
+                position: "bottom-right",
               }}
+              plugins={[
+                {
+                  name: "Tanstack Router",
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                {
+                  name: "Tanstack Query",
+                  render: <ReactQueryDevtoolsPanel />,
+                },
+              ]}
             />
-          </ThemeProvider>
-          <TanStackDevtools
-            config={{
-              position: "bottom-right",
-            }}
-            plugins={[
-              {
-                name: "Tanstack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              {
-                name: "Tanstack Query",
-                render: <ReactQueryDevtoolsPanel />,
-              },
-            ]}
-          />
-        </TanstackQueryProvider>
+          </TanstackQueryProvider>
+        </SerwistProvider>
         <Scripts />
       </body>
     </html>

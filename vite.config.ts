@@ -11,6 +11,8 @@ import viteReact from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
 
+import { serwistClient } from "./plugins/serwist.ts";
+
 const dirname =
   typeof __dirname !== "undefined"
     ? __dirname
@@ -40,6 +42,13 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    serwistClient({
+      swSrc: "src/sw.ts",
+      swDest: "sw.js",
+      globDirectory: "dist/client",
+      injectionPoint: "self.__SW_MANIFEST",
+      rollupFormat: "iife",
+    }),
   ],
   test: {
     projects: [

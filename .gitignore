@@ -219,8 +219,8 @@ graphify-out/
 # ============================================================
 __unconfig*
 
-apps/**/public/sw*
-apps/**/public/swe-worker*
+public/sw*
+public/swe-worker*
 
 **/__pycache__/
 *storybook.log
