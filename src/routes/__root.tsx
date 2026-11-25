@@ -1,13 +1,26 @@
+import { DevPanel } from "#/components/dev-panel";
 import { ThemeProvider } from "#/components/providers/theme-provider";
+import { TanstackQueryProvider } from "#/components/tanstack-query/tanstack-query-provider";
 import { TooltipProvider } from "#/components/ui/tooltip";
 import { requireSessions } from "#/features/auth/auth.functions";
+import { env } from "#/lib/env";
 import { globalHead } from "#/lib/head";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "react-hot-toast";
 
-export const Route = createRootRoute({
+interface RouterContextProps {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RouterContextProps>()({
   beforeLoad: async () => {
     const result = await requireSessions();
 
@@ -23,36 +36,50 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const context = Route.useRouteContext();
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider defaultTheme="system" storageKey="theme">
-          <TooltipProvider>{children}</TooltipProvider>
-          <Toaster
-            position="top-center"
-            reverseOrder={true}
-            gutter={6}
-            toastOptions={{
-              duration: 3000,
-              removeDelay: 2000,
-              className: "__react-hot-toast",
+        <TanstackQueryProvider queryClient={context.queryClient}>
+          <ThemeProvider defaultTheme="system" storageKey="theme">
+            <TooltipProvider>{children}</TooltipProvider>
+            <DevPanel
+              currentEnv={env.VITE_ENVIRONMENT}
+              envVars={Object.entries(import.meta.env)
+                .filter(([k]) => k.startsWith("VITE_"))
+                .map(([key, value]) => ({ key, value: value ?? "" }))}
+            />
+            <Toaster
+              position="top-center"
+              reverseOrder={true}
+              gutter={6}
+              toastOptions={{
+                duration: 3000,
+                removeDelay: 2000,
+                className: "__react-hot-toast",
+              }}
+            />
+          </ThemeProvider>
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
             }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              {
+                name: "Tanstack Query",
+                render: <ReactQueryDevtoolsPanel />,
+              },
+            ]}
           />
-        </ThemeProvider>
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        </TanstackQueryProvider>
         <Scripts />
       </body>
     </html>
