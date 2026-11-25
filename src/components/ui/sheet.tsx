@@ -1,4 +1,4 @@
-import * as React from "react";
+import type * as React from "react";
 
 import { Button } from "#/components/ui/button.tsx";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";

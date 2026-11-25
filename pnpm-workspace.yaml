@@ -3,5 +3,9 @@ allowBuilds:
   lightningcss: true
   sharp: true
   workerd: true
+minimumReleaseAgeExclude:
+  - '@types/node@26.6.10'
+  - '@types/react@19.3.2'
+  - eslint-plugin-storybook@10.6.9
 packages:
   - .
