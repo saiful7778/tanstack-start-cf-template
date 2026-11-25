@@ -7,7 +7,7 @@
   "name": "tanstack-start-cf-template",
   "compatibility_date": "2026-11-17",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry",
+  "main": "./src/server.ts",
   "observability": {
     "enabled": true,
   },
@@ -44,6 +44,20 @@
       },
     ],
   },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NOTIFICATIONS",
+        "class_name": "NotificationDurableObject",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["NotificationDurableObject"],
+    },
+  ],
   "env": {
     "staging": {
       "name": "tanstack-start-cf-template",
@@ -61,6 +75,14 @@
           "remote": true,
         },
       ],
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "NOTIFICATIONS",
+            "class_name": "NotificationDurableObject",
+          },
+        ],
+      },
       "queues": {
         "producers": [
           {
@@ -95,6 +117,14 @@
           "remote": true,
         },
       ],
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "NOTIFICATIONS",
+            "class_name": "NotificationDurableObject",
+          },
+        ],
+      },
       "queues": {
         "producers": [
           {

@@ -7,6 +7,8 @@ import {
 import { queueLog } from "./lib/logger.server";
 import { bindMailQueue } from "./mail";
 
+export { NotificationDurableObject } from "./features/notification/server/notification.do";
+
 const startHandler = createStartHandler(defaultStreamHandler);
 
 const serverEntry = createServerEntry({

@@ -19,6 +19,9 @@ export const env = createEnv({
     RESEND_EVENT_WEBHOOK_SECRET: z.string().optional(),
     BETTER_AUTH_SECRET: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
+    // Web Push is an optional capability: a deployment without VAPID keys
+    // still serves the app, it just cannot deliver push messages.
+    WEB_PUSH_PRIVATE_KEY: z.string().optional(),
   },
   clientPrefix: "VITE_",
   client: {
@@ -27,6 +30,7 @@ export const env = createEnv({
     VITE_SYSTEM_MAIL: z.email(),
     VITE_SUPPORT_MAIL: z.email(),
     VITE_GOOGLE_CLIENT_ID: z.string(),
+    VITE_WEB_PUSH_PUBLIC_KEY: z.string().optional(),
   },
   runtimeEnv: typeof window === "undefined" ? process.env : import.meta.env,
   emptyStringAsUndefined: true,

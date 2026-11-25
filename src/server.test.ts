@@ -8,6 +8,9 @@ const { bindMailQueue, handleBatch } = vi.hoisted(() => ({
 }));
 
 vi.mock("./mail", () => ({ bindMailQueue }));
+vi.mock("./features/notification/server/notification.do", () => ({
+  NotificationDurableObject: class {},
+}));
 
 const env = { RESEND_API_KEY: "re_123", DB: {}, LOG_LEVEL: "info" };
 
