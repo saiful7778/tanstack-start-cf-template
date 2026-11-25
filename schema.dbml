@@ -102,6 +102,46 @@ table email_threads {
   }
 }
 
+table notification_settings {
+  id text [pk, not null]
+  user_id text [not null]
+  category text [not null]
+  email_enabled integer [not null, default: 1]
+  push_enabled integer [not null, default: 1]
+  in_app_enabled integer [not null, default: 1]
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+  updated_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    (user_id, category) [name: 'notification_settings_user_category_key', unique]
+  }
+}
+
+table notifications {
+  id text [pk, not null]
+  recipient_id text [not null]
+  actor_id text
+  category text [not null]
+  level text [not null, default: 'INFO']
+  title text [not null]
+  message text [not null]
+  data text
+  is_read integer [not null, default: 0]
+  read_at integer
+  is_archived integer [not null, default: 0]
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+  updated_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    
+    recipient_id [name: 'notifications_recipient_idx']
+    (recipient_id, is_read) [name: 'notifications_recipient_read_idx']
+    created_at [name: 'notifications_created_at_idx']
+  }
+}
+
 table permissions {
   id text [pk, not null]
   level text [not null]
@@ -116,6 +156,23 @@ table permissions {
     level [name: 'permission_level_idx']
     resource [name: 'permission_resource_idx']
     action [name: 'permission_action_idx']
+  }
+}
+
+table push_subscriptions {
+  id text [pk, not null]
+  user_id text [not null]
+  endpoint text [not null]
+  p256dh text [not null]
+  auth text [not null]
+  expiration_time real
+  created_at integer [not null, default: `(unixepoch() * 1000)`]
+  updated_at integer [not null, default: `(unixepoch() * 1000)`]
+
+  indexes {
+    
+    endpoint [name: 'push_subscription_endpoint_unique', unique]
+    user_id [name: 'push_subscription_user_id']
   }
 }
 
@@ -280,6 +337,14 @@ ref: email_recipients.email_id > emails.id
 ref: emails.thread_id > email_threads.id
 
 ref: email_threads.closed_by - users.id
+
+ref: notifications.recipient_id > users.id
+
+ref: notifications.actor_id > users.id
+
+ref: notification_settings.user_id > users.id
+
+ref: push_subscriptions.user_id > users.id
 
 ref: role_permissions.role_id > roles.id
 

@@ -16,6 +16,11 @@ import z from "zod";
 
 import { RoleEnumSchema, type RoleEnumType } from "../../enums/zod-db-enums";
 import { AccountTable } from "../account.table";
+import {
+  NotificationSettingsTable,
+  NotificationTable,
+  PushSubscriptionTable,
+} from "../notification";
 import { UserRoleTable } from "../role-permission";
 import { SessionTable } from "../session.table";
 import { UserDeviceTable } from "./userDevice.table";
@@ -62,6 +67,19 @@ export const UserRelations = relations(UserTable, ({ many }) => ({
   }),
   devices: many(UserDeviceTable, { relationName: "UserDeviceToUser" }),
   events: many(UserEventTable, { relationName: "UserEventToUser" }),
+  // notification
+  notifications: many(NotificationTable, {
+    relationName: "NotificationToRecipient",
+  }),
+  sentNotifications: many(NotificationTable, {
+    relationName: "NotificationToActor",
+  }),
+  notificationSettings: many(NotificationSettingsTable, {
+    relationName: "NotificationSettingToUser",
+  }),
+  pushSubscriptions: many(PushSubscriptionTable, {
+    relationName: "PushSubscriptionToUser",
+  }),
 }));
 
 export const insertUserSchema = createInsertSchema(UserTable, {

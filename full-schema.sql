@@ -68,6 +68,54 @@ CREATE TABLE `email_threads` (
 CREATE INDEX `emailThread_closedBy_idx` ON `email_threads` (`closed_by`);
 CREATE INDEX `emailThread_contactEmail_idx` ON `email_threads` (`contact_email`);
 CREATE INDEX `emailThread_isClosed_idx` ON `email_threads` (`is_closed`);
+CREATE TABLE `notifications` (
+	`id` text PRIMARY KEY NOT NULL,
+	`recipient_id` text NOT NULL,
+	`actor_id` text,
+	`category` text NOT NULL,
+	`level` text DEFAULT 'INFO' NOT NULL,
+	`title` text NOT NULL,
+	`message` text NOT NULL,
+	`data` text,
+	`is_read` integer DEFAULT false NOT NULL,
+	`read_at` integer,
+	`is_archived` integer DEFAULT false NOT NULL,
+	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
+	FOREIGN KEY (`recipient_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`actor_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null
+);
+
+CREATE INDEX `notifications_recipient_idx` ON `notifications` (`recipient_id`);
+CREATE INDEX `notifications_recipient_read_idx` ON `notifications` (`recipient_id`,`is_read`);
+CREATE INDEX `notifications_created_at_idx` ON `notifications` (`created_at`);
+CREATE TABLE `notification_settings` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`category` text NOT NULL,
+	`email_enabled` integer DEFAULT true NOT NULL,
+	`push_enabled` integer DEFAULT true NOT NULL,
+	`in_app_enabled` integer DEFAULT true NOT NULL,
+	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+
+CREATE UNIQUE INDEX `notification_settings_user_category_key` ON `notification_settings` (`user_id`,`category`);
+CREATE TABLE `push_subscriptions` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`endpoint` text NOT NULL,
+	`p256dh` text NOT NULL,
+	`auth` text NOT NULL,
+	`expiration_time` real,
+	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+
+CREATE UNIQUE INDEX `push_subscription_endpoint_unique` ON `push_subscriptions` (`endpoint`);
+CREATE INDEX `push_subscription_user_id` ON `push_subscriptions` (`user_id`);
 CREATE TABLE `permissions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`level` text NOT NULL,

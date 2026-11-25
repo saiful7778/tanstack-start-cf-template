@@ -6,6 +6,8 @@ import {
   EMAIL_EVENT_TYPE,
   EMAIL_RECIPIENT_TYPE,
   EMAIL_STATUS,
+  NOTIFICATION_CATEGORY,
+  NOTIFICATION_LEVEL,
   PERMISSION_LEVEL,
   RESOURCE_TYPE,
   ROLES,
@@ -39,4 +41,14 @@ export type EmailEventTypeEnumType = z.infer<typeof EmailEventTypeEnumSchema>;
 export const EmailRecipientTypeEnumSchema = z.enum(EMAIL_RECIPIENT_TYPE);
 export type EmailRecipientTypeEnumType = z.infer<
   typeof EmailRecipientTypeEnumSchema
+>;
+
+export const NotificationCategoryEnumSchema = z.enum(NOTIFICATION_CATEGORY);
+export type NotificationCategoryEnumType = z.infer<
+  typeof NotificationCategoryEnumSchema
+>;
+
+export const NotificationLevelEnumSchema = z.enum(NOTIFICATION_LEVEL);
+export type NotificationLevelEnumType = z.infer<
+  typeof NotificationLevelEnumSchema
 >;

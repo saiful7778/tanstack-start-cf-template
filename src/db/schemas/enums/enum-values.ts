@@ -54,3 +54,11 @@ export const EMAIL_RECIPIENT_TYPE = [
   "from",
   "received_for",
 ] as const;
+
+export const NOTIFICATION_CATEGORY = ["SYSTEM", "AUTH", "SUPPORT"] as const;
+export const NOTIFICATION_LEVEL = [
+  "INFO",
+  "SUCCESS",
+  "WARNING",
+  "ERROR",
+] as const;
