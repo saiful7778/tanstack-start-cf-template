@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { DateTimePickerField } from "#/components/form-fields/DateTimePickerField";
 import { InputField } from "#/components/form-fields/InputField";
 import { Button } from "#/components/ui/button";
@@ -11,14 +9,13 @@ import {
 } from "#/components/ui/field";
 import { Spinner } from "#/components/ui/spinner";
 import { Switch } from "#/components/ui/switch";
-import { authClient } from "#/features/auth/auth.client";
-import type { UserBannedType } from "#/features/auth/auth.schema";
-import { userBannedSchema } from "#/features/auth/auth.schema";
 import { useAuthStore } from "#/zustand/auth/AuthStoreContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createClientOnlyFn } from "@tanstack/react-start";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import toast from "react-hot-toast";
+
+import { useUserBan } from "../../api/user.api.hook";
+import type { UserBannedType } from "../../user.schema";
+import { userBannedSchema } from "../../user.schema";
 
 interface UserBannedFormProps {
   initialData: UserBannedType;
@@ -32,8 +29,6 @@ export function UserBannedForm({
   onSuccess,
 }: UserBannedFormProps) {
   "use no memo";
-  const [isLoading, setIsLoading] = useState(false);
-  const toastId = "ban_unbanned_user_toast_message";
 
   const user = useAuthStore((state) => state.user);
   const form = useForm<UserBannedType>({
@@ -41,59 +36,22 @@ export function UserBannedForm({
     defaultValues: initialData,
   });
 
-  const handleSubmit = createClientOnlyFn(async (e: UserBannedType) => {
-    if (e.banned) {
-      let banExpiresIn: number = 60 * 60 * 24 * 10;
-
-      if (e.banExpires) {
-        banExpiresIn = e.banExpires.getTime() - now;
-      }
-
-      await authClient.admin.banUser({
-        userId: e.userId,
-        banExpiresIn,
-        banReason: e.banReason,
-        fetchOptions: {
-          onRequest: () => {
-            setIsLoading(true);
-            toast.loading("Loading...", { id: toastId });
-          },
-          onSuccess: () => {
-            setIsLoading(false);
-            onSuccess?.();
-            toast.success("User has been banned successfully.", {
-              id: toastId,
-            });
-          },
-          onError: ({ error }) => {
-            setIsLoading(false);
-            toast.error(error.message, { id: toastId });
-          },
-        },
+  const { mutate, isPending } = useUserBan<keyof UserBannedType>({
+    onSuccess: () => {
+      onSuccess?.();
+    },
+    onValidationErrors: (fields) => {
+      fields.forEach(({ fieldName, message }) => {
+        form.setError(fieldName, {
+          message,
+        });
       });
-    } else {
-      await authClient.admin.unbanUser({
-        userId: e.userId,
-        fetchOptions: {
-          onRequest: () => {
-            setIsLoading(true);
-            toast.loading("Loading...", { id: toastId });
-          },
-          onSuccess: () => {
-            setIsLoading(false);
-            onSuccess?.();
-            toast.success("User has been unbanned successfully.", {
-              id: toastId,
-            });
-          },
-          onError: ({ error }) => {
-            setIsLoading(false);
-            toast.error(error.message, { id: toastId });
-          },
-        },
-      });
-    }
+    },
   });
+
+  const handleSubmit = (e: UserBannedType) => {
+    mutate(e);
+  };
 
   const isBanned = useWatch({
     control: form.control,
@@ -113,7 +71,7 @@ export function UserBannedForm({
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState}>
                 <div className="flex h-10 flex-row items-center justify-between rounded-md border border-input bg-transparent px-3 py-1 text-base selection:bg-primary dark:bg-input/30">
-                  <FieldLabel htmlFor="banned" aria-disabled={isLoading}>
+                  <FieldLabel htmlFor="banned" aria-disabled={isPending}>
                     Banned
                   </FieldLabel>
                   <div className="flex w-auto items-center justify-end">
@@ -127,8 +85,8 @@ export function UserBannedForm({
                           form.setValue("banExpires", undefined);
                         }
                       }}
-                      disabled={isLoading}
-                      aria-disabled={isLoading}
+                      disabled={isPending}
+                      aria-disabled={isPending}
                     />
                   </div>
                 </div>
@@ -144,14 +102,14 @@ export function UserBannedForm({
                 control={form.control}
                 name="banReason"
                 placeholder="Banned Reason"
-                disabled={isLoading}
+                disabled={isPending}
               />
               <DateTimePickerField
                 control={form.control}
                 name="banExpires"
                 placeholder="Banned Expires"
                 timezone={user.timezone}
-                disabled={isLoading}
+                disabled={isPending}
                 showTimeSelection={false}
                 calendarProps={{
                   disabled: {
@@ -163,11 +121,11 @@ export function UserBannedForm({
           )}
           <div className="text-right">
             <Button
-              disabled={!form.formState.isDirty || isLoading}
-              aria-disabled={!form.formState.isDirty || isLoading}
+              disabled={!form.formState.isDirty || isPending}
+              aria-disabled={!form.formState.isDirty || isPending}
               type="submit"
             >
-              {isLoading ? <Spinner /> : "Update"}
+              {isPending ? <Spinner /> : "Update"}
             </Button>
           </div>
         </FieldGroup>

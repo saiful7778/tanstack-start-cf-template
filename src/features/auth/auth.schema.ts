@@ -64,14 +64,6 @@ export const updatePasswordSchema = z
   );
 export type UpdatePasswordType = z.infer<typeof updatePasswordSchema>;
 
-export const userBannedSchema = z.object({
-  userId: z.uuid(),
-  banned: z.boolean().optional(),
-  banReason: z.string().optional(),
-  banExpires: z.date().optional(),
-});
-export type UserBannedType = z.infer<typeof userBannedSchema>;
-
 export const profileUpdateSchema = z.object({
   name: z.string(),
   email: emailField({ fieldName: "email" }),

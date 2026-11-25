@@ -52,6 +52,51 @@ export function useRoleUpdate<TFieldNames>({
   );
 }
 
+export function useUserBan<TFieldNames>({
+  onRequestStart,
+  onRequestEnd,
+  onSuccess,
+  onError,
+  onValidationErrors,
+}: IApiHookInput<TFieldNames> = {}) {
+  const toastId = "ban_unban_user_toast_message";
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    orpcTQClient.user.ban.mutationOptions({
+      onMutate: () => {
+        toast.loading("Updating...", { id: toastId });
+        onRequestStart?.();
+      },
+      onSuccess: async ({ message }) => {
+        toast.success(message, { id: toastId });
+        await queryClient.invalidateQueries({
+          queryKey: orpcTQClient.user.list.queryKey({
+            input: {},
+          }),
+          exact: false,
+        });
+        onSuccess?.(message);
+      },
+      onError: (error) => {
+        const { message, type, fieldErrors } =
+          formatOrpcError<TFieldNames>(error);
+
+        if (type === "validation" && fieldErrors) {
+          onValidationErrors?.(fieldErrors);
+        }
+
+        toast.error(message, { id: toastId });
+
+        onError?.(message);
+      },
+      onSettled: () => {
+        onRequestEnd?.();
+      },
+    })
+  );
+}
+
 export function useProfileUpdate<TFieldNames>({
   onRequestStart,
   onRequestEnd,

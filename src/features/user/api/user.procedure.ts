@@ -7,8 +7,10 @@ import {
   UserSessionTable,
   UserTable,
 } from "#/db/schemas";
+import { RoleEnumSchema } from "#/db/schemas/enums/zod-db-enums";
 import { buildPaginateOptions, buildPaginationMeta } from "#/db/utils";
 import { getAuth } from "#/features/auth/auth.server";
+import { notifyUser } from "#/features/notification/notification.notify";
 import {
   authMiddleware,
   userPermissionMiddleware,
@@ -250,6 +252,8 @@ export const updateUserRoleProcedure = userImpl.updateRole
     const [existUser] = await context.db
       .select({
         id: UserTable.id,
+        name: UserTable.name,
+        role: UserTable.role,
       })
       .from(UserTable)
       .where(eq(UserTable.id, input.userId))
@@ -260,7 +264,7 @@ export const updateUserRoleProcedure = userImpl.updateRole
     }
 
     const roles = await context.db
-      .select({ id: RoleTable.id })
+      .select({ id: RoleTable.id, roleName: RoleTable.roleName })
       .from(RoleTable)
       .where(eq(RoleTable.roleName, input.roleName));
 
@@ -281,7 +285,97 @@ export const updateUserRoleProcedure = userImpl.updateRole
       }))
     );
 
+    // Notify after the role rows are committed: the recipient must not be told
+    // about a change that rolled back. `notifyUser` never throws, so a failed
+    // delivery cannot fail the admin action.
+    await notifyUser({
+      database: context.db,
+      recipientId: existUser.id,
+      actorId: context.user.id,
+      category: "SYSTEM",
+      level:
+        input.roleName === RoleEnumSchema.enum.SUPER_ADMIN ? "WARNING" : "INFO",
+      title: "Your role has changed",
+      message: `Your account role was changed to ${input.roleName}.`,
+      data: {
+        roleName: input.roleName,
+      },
+    });
+
     return apiResponse(API_MESSAGES.USER.UPDATE, null);
+  });
+
+export const userBanProcedure = userImpl.ban
+  .use(
+    userPermissionMiddleware([
+      { level: "system", resource: "user", action: "manage" },
+      { level: "system", resource: "user", action: "update" },
+    ])
+  )
+  .handler(async ({ input, context, errors }) => {
+    const [existUser] = await context.db
+      .select({
+        id: UserTable.id,
+        name: UserTable.name,
+      })
+      .from(UserTable)
+      .where(eq(UserTable.id, input.userId))
+      .limit(1);
+
+    if (!existUser) {
+      throw errors.NOT_FOUND();
+    }
+
+    if (input.banned) {
+      const banExpiresIn =
+        input.banExpires && input.banExpires.getTime() > Date.now()
+          ? Math.floor((input.banExpires.getTime() - Date.now()) / 1000)
+          : undefined;
+
+      await getAuth().api.banUser({
+        body: {
+          userId: existUser.id,
+          banReason: input.banReason || undefined,
+          banExpiresIn,
+        },
+        headers: context.reqHeaders,
+      });
+    } else {
+      await getAuth().api.unbanUser({
+        body: { userId: existUser.id },
+        headers: context.reqHeaders,
+      });
+    }
+
+    // Only after the ban is applied. A ban can revoke sessions, so this is a
+    // courtesy for the in-app inbox and the recipient's email — it must never
+    // decide whether the ban succeeded.
+    await notifyUser({
+      database: context.db,
+      recipientId: existUser.id,
+      actorId: context.user.id,
+      category: "SYSTEM",
+      level: input.banned ? "WARNING" : "SUCCESS",
+      title: input.banned
+        ? "Your account has been banned"
+        : "Your account has been restored",
+      message: input.banned
+        ? input.banReason
+          ? `Your account has been banned. Reason: ${input.banReason}`
+          : "Your account has been banned."
+        : "Your account has been unbanned and access has been restored.",
+      data: input.banned
+        ? {
+            reason: input.banReason ?? null,
+            expiresAt: input.banExpires?.toISOString() ?? null,
+          }
+        : null,
+    });
+
+    return apiResponse(
+      input.banned ? API_MESSAGES.USER.BAN : API_MESSAGES.USER.UNBAN,
+      null
+    );
   });
 
 export const userDetailsProcedure = userImpl.details

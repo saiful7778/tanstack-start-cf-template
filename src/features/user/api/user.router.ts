@@ -3,6 +3,7 @@ import {
   listUserProcedure,
   profileUpdateProcedure,
   updateUserRoleProcedure,
+  userBanProcedure,
   userDetailsProcedure,
   userImpl,
   userStatsProcedure,
@@ -13,6 +14,7 @@ export const userRouter = userImpl.router({
   listForSearch: listUserForSearchProcedure,
   stats: userStatsProcedure,
   updateRole: updateUserRoleProcedure,
+  ban: userBanProcedure,
   updateProfile: profileUpdateProcedure,
   details: userDetailsProcedure,
 });

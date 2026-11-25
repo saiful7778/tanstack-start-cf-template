@@ -14,6 +14,14 @@ export const roleUpdateSchema = z.object({
 });
 export type RoleUpdateType = z.infer<typeof roleUpdateSchema>;
 
+export const userBannedSchema = z.object({
+  userId: z.uuid(),
+  banned: z.boolean().optional(),
+  banReason: z.string().optional(),
+  banExpires: z.date().optional(),
+});
+export type UserBannedType = z.infer<typeof userBannedSchema>;
+
 export const profileUpdateSchema = z.object({
   name: z.string(),
   email: emailField({ fieldName: "email" }),

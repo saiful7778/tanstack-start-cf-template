@@ -8,7 +8,11 @@ import type { InferContractRouterType } from "#/types/orpc.types";
 import z from "zod";
 
 import { roleSqlSchema, userProfileSchema } from "../user.api-schema";
-import { profileUpdateSchema, roleUpdateSchema } from "../user.schema";
+import {
+  profileUpdateSchema,
+  roleUpdateSchema,
+  userBannedSchema,
+} from "../user.schema";
 
 const userBaseContract = baseContract.errors({
   NOT_FOUND: {
@@ -103,6 +107,18 @@ export type UserRoleUpdateContractType = InferContractRouterType<
   typeof userRoleUpdateContract
 >;
 
+const userBanContract = userBaseContract
+  .route({
+    path: "/users/update/ban",
+    description: "Ban or unban user",
+    tags,
+  })
+  .input(userBannedSchema)
+  .output(apiOutputSchema(z.null()));
+export type UserBanContractType = InferContractRouterType<
+  typeof userBanContract
+>;
+
 const userDetailsContract = userBaseContract
   .route({
     path: "/users/details",
@@ -138,6 +154,7 @@ export const userContract = {
   listForSearch: listUserForSearchContract,
   stats: userStatsContract,
   updateRole: userRoleUpdateContract,
+  ban: userBanContract,
   updateProfile: profileUpdateContract,
   details: userDetailsContract,
 };
