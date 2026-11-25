@@ -1,3 +1,4 @@
+import type { DataTableFeatures } from "#/components/data-table/table-features";
 import type {
   CellData,
   ColumnDef,
@@ -48,7 +49,9 @@ export type FilterVariant =
   | "select"
   | "multiSelect";
 
-export type ColumnType<T extends RowData> = Array<ColumnDef<TableFeatures, T>>;
+export type ColumnType<T extends RowData> = Array<
+  ColumnDef<DataTableFeatures, T>
+>;
 
 export type FiltersType = Partial<{
   page: number;
