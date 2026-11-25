@@ -4,7 +4,7 @@ import type {
   SidebarGroupMenuLinkType,
   SidebarMenuLinkType,
 } from "#/types";
-import { House, Settings, User } from "lucide-react";
+import { House, Settings, ShieldUser, User, UsersRound } from "lucide-react";
 
 export function manageOrList(
   resource: PermissionType["resource"]
@@ -24,6 +24,25 @@ export const sidebarMenuLinks: Array<SidebarGroupMenuLinkType> = [
         path: "/dashboard",
         pathRegex: /^\/dashboard\/?$/,
         icon: <House />,
+      },
+    ],
+  },
+  {
+    groupName: "Administration",
+    items: [
+      {
+        title: "All Users",
+        path: "/dashboard/users",
+        pathRegex: /^\/dashboard\/users(?:\/.*)?$/,
+        permissions: manageOrList("user"),
+        icon: <UsersRound />,
+      },
+      {
+        title: "Roles & Permissions",
+        path: "/dashboard/roles",
+        pathRegex: /^\/dashboard\/roles\/?$/,
+        permissions: manageOrList("role_permission"),
+        icon: <ShieldUser />,
       },
     ],
   },
