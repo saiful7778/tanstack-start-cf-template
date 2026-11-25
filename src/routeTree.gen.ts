@@ -19,7 +19,11 @@ import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth.$";
 import { Route as ApiMailResendEventRouteImport } from "./routes/api/mail/resend/event";
 import { Route as ApiMailResendInboundRouteImport } from "./routes/api/mail/resend/inbound";
 import { Route as ApiMailResendOutboundRouteImport } from "./routes/api/mail/resend/outbound";
+import { Route as ApiRpcSplatRouteImport } from "./routes/api/rpc.$";
 import { Route as DashboardDashboardLayoutRouteImport } from "./routes/dashboard/_dashboardLayout";
+import { Route as DashboardDashboardLayoutadminRolesRouteImport } from "./routes/dashboard/_dashboardLayout/(admin)/roles";
+import { Route as DashboardDashboardLayoutadminUsersUserIdRouteImport } from "./routes/dashboard/_dashboardLayout/(admin)/users/$userId";
+import { Route as DashboardDashboardLayoutadminUsersIndexRouteImport } from "./routes/dashboard/_dashboardLayout/(admin)/users/index";
 import { Route as DashboardDashboardLayoutIndexRouteImport } from "./routes/dashboard/_dashboardLayout/index";
 import { Route as DashboardDashboardLayoutProfileRouteImport } from "./routes/dashboard/_dashboardLayout/profile";
 import { Route as DashboardDashboardLayoutSettingsSettingsLayoutRouteImport } from "./routes/dashboard/_dashboardLayout/settings/_settingsLayout";
@@ -82,6 +86,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: "/api/auth/$",
   getParentRoute: () => rootRouteImport,
 } as any);
+const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
+  id: "/api/rpc/$",
+  path: "/api/rpc/$",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const DashboardDashboardLayoutIndexRoute =
   DashboardDashboardLayoutIndexRouteImport.update({
     id: "/",
@@ -109,10 +118,28 @@ const ApiMailResendOutboundRoute = ApiMailResendOutboundRouteImport.update({
   path: "/api/mail/resend/outbound",
   getParentRoute: () => rootRouteImport,
 } as any);
+const DashboardDashboardLayoutadminRolesRoute =
+  DashboardDashboardLayoutadminRolesRouteImport.update({
+    id: "/(admin)/roles",
+    path: "/roles",
+    getParentRoute: () => DashboardDashboardLayoutRoute,
+  } as any);
 const DashboardDashboardLayoutSettingsSettingsLayoutRoute =
   DashboardDashboardLayoutSettingsSettingsLayoutRouteImport.update({
     id: "/settings/_settingsLayout",
     path: "/settings",
+    getParentRoute: () => DashboardDashboardLayoutRoute,
+  } as any);
+const DashboardDashboardLayoutadminUsersIndexRoute =
+  DashboardDashboardLayoutadminUsersIndexRouteImport.update({
+    id: "/(admin)/users/",
+    path: "/users/",
+    getParentRoute: () => DashboardDashboardLayoutRoute,
+  } as any);
+const DashboardDashboardLayoutadminUsersUserIdRoute =
+  DashboardDashboardLayoutadminUsersUserIdRouteImport.update({
+    id: "/(admin)/users/$userId",
+    path: "/users/$userId",
     getParentRoute: () => DashboardDashboardLayoutRoute,
   } as any);
 const DashboardDashboardLayoutSettingsSettingsLayoutIndexRoute =
@@ -160,16 +187,20 @@ export interface FileRoutesByFullPath {
   "/sign-in": typeof authAuthLayoutSignInRoute;
   "/sign-up": typeof authAuthLayoutSignUpRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/rpc/$": typeof ApiRpcSplatRoute;
   "/dashboard/profile": typeof DashboardDashboardLayoutProfileRoute;
   "/dashboard/": typeof DashboardDashboardLayoutIndexRoute;
   "/api/mail/resend/event": typeof ApiMailResendEventRoute;
   "/api/mail/resend/inbound": typeof ApiMailResendInboundRoute;
   "/api/mail/resend/outbound": typeof ApiMailResendOutboundRoute;
+  "/dashboard/roles": typeof DashboardDashboardLayoutadminRolesRoute;
   "/dashboard/settings": typeof DashboardDashboardLayoutSettingsSettingsLayoutRouteWithChildren;
+  "/dashboard/users/$userId": typeof DashboardDashboardLayoutadminUsersUserIdRoute;
   "/dashboard/settings/connected-apps": typeof DashboardDashboardLayoutSettingsSettingsLayoutConnectedAppsRoute;
   "/dashboard/settings/profile": typeof DashboardDashboardLayoutSettingsSettingsLayoutProfileRoute;
   "/dashboard/settings/sessions": typeof DashboardDashboardLayoutSettingsSettingsLayoutSessionsRoute;
   "/dashboard/settings/update-password": typeof DashboardDashboardLayoutSettingsSettingsLayoutUpdatePasswordRoute;
+  "/dashboard/users/": typeof DashboardDashboardLayoutadminUsersIndexRoute;
   "/dashboard/settings/": typeof DashboardDashboardLayoutSettingsSettingsLayoutIndexRoute;
 }
 export interface FileRoutesByTo {
@@ -181,15 +212,19 @@ export interface FileRoutesByTo {
   "/sign-in": typeof authAuthLayoutSignInRoute;
   "/sign-up": typeof authAuthLayoutSignUpRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/rpc/$": typeof ApiRpcSplatRoute;
   "/dashboard/profile": typeof DashboardDashboardLayoutProfileRoute;
   "/dashboard": typeof DashboardDashboardLayoutIndexRoute;
   "/api/mail/resend/event": typeof ApiMailResendEventRoute;
   "/api/mail/resend/inbound": typeof ApiMailResendInboundRoute;
   "/api/mail/resend/outbound": typeof ApiMailResendOutboundRoute;
+  "/dashboard/roles": typeof DashboardDashboardLayoutadminRolesRoute;
+  "/dashboard/users/$userId": typeof DashboardDashboardLayoutadminUsersUserIdRoute;
   "/dashboard/settings/connected-apps": typeof DashboardDashboardLayoutSettingsSettingsLayoutConnectedAppsRoute;
   "/dashboard/settings/profile": typeof DashboardDashboardLayoutSettingsSettingsLayoutProfileRoute;
   "/dashboard/settings/sessions": typeof DashboardDashboardLayoutSettingsSettingsLayoutSessionsRoute;
   "/dashboard/settings/update-password": typeof DashboardDashboardLayoutSettingsSettingsLayoutUpdatePasswordRoute;
+  "/dashboard/users": typeof DashboardDashboardLayoutadminUsersIndexRoute;
   "/dashboard/settings": typeof DashboardDashboardLayoutSettingsSettingsLayoutIndexRoute;
 }
 export interface FileRoutesById {
@@ -204,16 +239,20 @@ export interface FileRoutesById {
   "/(auth)/_authLayout/sign-in": typeof authAuthLayoutSignInRoute;
   "/(auth)/_authLayout/sign-up": typeof authAuthLayoutSignUpRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/rpc/$": typeof ApiRpcSplatRoute;
   "/dashboard/_dashboardLayout/profile": typeof DashboardDashboardLayoutProfileRoute;
   "/dashboard/_dashboardLayout/": typeof DashboardDashboardLayoutIndexRoute;
   "/api/mail/resend/event": typeof ApiMailResendEventRoute;
   "/api/mail/resend/inbound": typeof ApiMailResendInboundRoute;
   "/api/mail/resend/outbound": typeof ApiMailResendOutboundRoute;
+  "/dashboard/_dashboardLayout/(admin)/roles": typeof DashboardDashboardLayoutadminRolesRoute;
   "/dashboard/_dashboardLayout/settings/_settingsLayout": typeof DashboardDashboardLayoutSettingsSettingsLayoutRouteWithChildren;
+  "/dashboard/_dashboardLayout/(admin)/users/$userId": typeof DashboardDashboardLayoutadminUsersUserIdRoute;
   "/dashboard/_dashboardLayout/settings/_settingsLayout/connected-apps": typeof DashboardDashboardLayoutSettingsSettingsLayoutConnectedAppsRoute;
   "/dashboard/_dashboardLayout/settings/_settingsLayout/profile": typeof DashboardDashboardLayoutSettingsSettingsLayoutProfileRoute;
   "/dashboard/_dashboardLayout/settings/_settingsLayout/sessions": typeof DashboardDashboardLayoutSettingsSettingsLayoutSessionsRoute;
   "/dashboard/_dashboardLayout/settings/_settingsLayout/update-password": typeof DashboardDashboardLayoutSettingsSettingsLayoutUpdatePasswordRoute;
+  "/dashboard/_dashboardLayout/(admin)/users/": typeof DashboardDashboardLayoutadminUsersIndexRoute;
   "/dashboard/_dashboardLayout/settings/_settingsLayout/": typeof DashboardDashboardLayoutSettingsSettingsLayoutIndexRoute;
 }
 export interface FileRouteTypes {
@@ -228,16 +267,20 @@ export interface FileRouteTypes {
     | "/sign-in"
     | "/sign-up"
     | "/api/auth/$"
+    | "/api/rpc/$"
     | "/dashboard/profile"
     | "/dashboard/"
     | "/api/mail/resend/event"
     | "/api/mail/resend/inbound"
     | "/api/mail/resend/outbound"
+    | "/dashboard/roles"
     | "/dashboard/settings"
+    | "/dashboard/users/$userId"
     | "/dashboard/settings/connected-apps"
     | "/dashboard/settings/profile"
     | "/dashboard/settings/sessions"
     | "/dashboard/settings/update-password"
+    | "/dashboard/users/"
     | "/dashboard/settings/";
   fileRoutesByTo: FileRoutesByTo;
   to:
@@ -249,15 +292,19 @@ export interface FileRouteTypes {
     | "/sign-in"
     | "/sign-up"
     | "/api/auth/$"
+    | "/api/rpc/$"
     | "/dashboard/profile"
     | "/dashboard"
     | "/api/mail/resend/event"
     | "/api/mail/resend/inbound"
     | "/api/mail/resend/outbound"
+    | "/dashboard/roles"
+    | "/dashboard/users/$userId"
     | "/dashboard/settings/connected-apps"
     | "/dashboard/settings/profile"
     | "/dashboard/settings/sessions"
     | "/dashboard/settings/update-password"
+    | "/dashboard/users"
     | "/dashboard/settings";
   id:
     | "__root__"
@@ -271,16 +318,20 @@ export interface FileRouteTypes {
     | "/(auth)/_authLayout/sign-in"
     | "/(auth)/_authLayout/sign-up"
     | "/api/auth/$"
+    | "/api/rpc/$"
     | "/dashboard/_dashboardLayout/profile"
     | "/dashboard/_dashboardLayout/"
     | "/api/mail/resend/event"
     | "/api/mail/resend/inbound"
     | "/api/mail/resend/outbound"
+    | "/dashboard/_dashboardLayout/(admin)/roles"
     | "/dashboard/_dashboardLayout/settings/_settingsLayout"
+    | "/dashboard/_dashboardLayout/(admin)/users/$userId"
     | "/dashboard/_dashboardLayout/settings/_settingsLayout/connected-apps"
     | "/dashboard/_dashboardLayout/settings/_settingsLayout/profile"
     | "/dashboard/_dashboardLayout/settings/_settingsLayout/sessions"
     | "/dashboard/_dashboardLayout/settings/_settingsLayout/update-password"
+    | "/dashboard/_dashboardLayout/(admin)/users/"
     | "/dashboard/_dashboardLayout/settings/_settingsLayout/";
   fileRoutesById: FileRoutesById;
 }
@@ -290,6 +341,7 @@ export interface RootRouteChildren {
   authAuthLayoutRoute: typeof authAuthLayoutRouteWithChildren;
   DashboardDashboardLayoutRoute: typeof DashboardDashboardLayoutRouteWithChildren;
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
+  ApiRpcSplatRoute: typeof ApiRpcSplatRoute;
   ApiMailResendEventRoute: typeof ApiMailResendEventRoute;
   ApiMailResendInboundRoute: typeof ApiMailResendInboundRoute;
   ApiMailResendOutboundRoute: typeof ApiMailResendOutboundRoute;
@@ -367,6 +419,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiAuthSplatRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/api/rpc/$": {
+      id: "/api/rpc/$";
+      path: "/api/rpc/$";
+      fullPath: "/api/rpc/$";
+      preLoaderRoute: typeof ApiRpcSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/dashboard/_dashboardLayout/": {
       id: "/dashboard/_dashboardLayout/";
       path: "/";
@@ -402,11 +461,32 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiMailResendOutboundRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/dashboard/_dashboardLayout/(admin)/roles": {
+      id: "/dashboard/_dashboardLayout/(admin)/roles";
+      path: "/roles";
+      fullPath: "/dashboard/roles";
+      preLoaderRoute: typeof DashboardDashboardLayoutadminRolesRouteImport;
+      parentRoute: typeof DashboardDashboardLayoutRoute;
+    };
     "/dashboard/_dashboardLayout/settings/_settingsLayout": {
       id: "/dashboard/_dashboardLayout/settings/_settingsLayout";
       path: "/settings";
       fullPath: "/dashboard/settings";
       preLoaderRoute: typeof DashboardDashboardLayoutSettingsSettingsLayoutRouteImport;
+      parentRoute: typeof DashboardDashboardLayoutRoute;
+    };
+    "/dashboard/_dashboardLayout/(admin)/users/": {
+      id: "/dashboard/_dashboardLayout/(admin)/users/";
+      path: "/users";
+      fullPath: "/dashboard/users/";
+      preLoaderRoute: typeof DashboardDashboardLayoutadminUsersIndexRouteImport;
+      parentRoute: typeof DashboardDashboardLayoutRoute;
+    };
+    "/dashboard/_dashboardLayout/(admin)/users/$userId": {
+      id: "/dashboard/_dashboardLayout/(admin)/users/$userId";
+      path: "/users/$userId";
+      fullPath: "/dashboard/users/$userId";
+      preLoaderRoute: typeof DashboardDashboardLayoutadminUsersUserIdRouteImport;
       parentRoute: typeof DashboardDashboardLayoutRoute;
     };
     "/dashboard/_dashboardLayout/settings/_settingsLayout/": {
@@ -497,15 +577,24 @@ const DashboardDashboardLayoutSettingsSettingsLayoutRouteWithChildren =
 interface DashboardDashboardLayoutRouteChildren {
   DashboardDashboardLayoutProfileRoute: typeof DashboardDashboardLayoutProfileRoute;
   DashboardDashboardLayoutIndexRoute: typeof DashboardDashboardLayoutIndexRoute;
+  DashboardDashboardLayoutadminRolesRoute: typeof DashboardDashboardLayoutadminRolesRoute;
   DashboardDashboardLayoutSettingsSettingsLayoutRoute: typeof DashboardDashboardLayoutSettingsSettingsLayoutRouteWithChildren;
+  DashboardDashboardLayoutadminUsersUserIdRoute: typeof DashboardDashboardLayoutadminUsersUserIdRoute;
+  DashboardDashboardLayoutadminUsersIndexRoute: typeof DashboardDashboardLayoutadminUsersIndexRoute;
 }
 
 const DashboardDashboardLayoutRouteChildren: DashboardDashboardLayoutRouteChildren =
   {
     DashboardDashboardLayoutProfileRoute: DashboardDashboardLayoutProfileRoute,
     DashboardDashboardLayoutIndexRoute: DashboardDashboardLayoutIndexRoute,
+    DashboardDashboardLayoutadminRolesRoute:
+      DashboardDashboardLayoutadminRolesRoute,
     DashboardDashboardLayoutSettingsSettingsLayoutRoute:
       DashboardDashboardLayoutSettingsSettingsLayoutRouteWithChildren,
+    DashboardDashboardLayoutadminUsersUserIdRoute:
+      DashboardDashboardLayoutadminUsersUserIdRoute,
+    DashboardDashboardLayoutadminUsersIndexRoute:
+      DashboardDashboardLayoutadminUsersIndexRoute,
   };
 
 const DashboardDashboardLayoutRouteWithChildren =
@@ -519,6 +608,7 @@ const rootRouteChildren: RootRouteChildren = {
   authAuthLayoutRoute: authAuthLayoutRouteWithChildren,
   DashboardDashboardLayoutRoute: DashboardDashboardLayoutRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiRpcSplatRoute: ApiRpcSplatRoute,
   ApiMailResendEventRoute: ApiMailResendEventRoute,
   ApiMailResendInboundRoute: ApiMailResendInboundRoute,
   ApiMailResendOutboundRoute: ApiMailResendOutboundRoute,

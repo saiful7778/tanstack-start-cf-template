@@ -1,0 +1,67 @@
+import { DashboardShell } from "#/components/dashboard-shell";
+import {
+  DashboardShellDescription,
+  DashboardShellHeader,
+  DashboardShellTitle,
+} from "#/components/dashboard-shell/DashboardShellHeader";
+import {
+  DashboardShellDescriptionSkeleton,
+  DashboardShellTitleSkeleton,
+} from "#/components/dashboard-shell/DashboardShellHeaderSkeleton";
+import { DashboardShellSkeleton } from "#/components/dashboard-shell/DashboardShellSkeleton";
+import { DataTableSkeleton } from "#/components/data-table/data-table-skeleton";
+import { DataTableToolbarSkeleton } from "#/components/data-table/data-table-toolbar-skeleton";
+import { requirePermissions } from "#/features/auth/auth.functions";
+import { RoleManagementTable } from "#/features/role/components/role-table/RoleManagementTable";
+import { head } from "#/lib/head";
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute(
+  "/dashboard/_dashboardLayout/(admin)/roles"
+)({
+  beforeLoad: ({ context }) => {
+    requirePermissions(
+      context.permissions,
+      [{ level: "system", resource: "role_permission", action: "list" }],
+      context.user.id
+    );
+  },
+  head: ({ match }) =>
+    head({ pathname: match.pathname, titleByTemplate: "Roles & Permissions" }),
+  pendingComponent: LoadingComponent,
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  return (
+    <DashboardShell
+      header={
+        <DashboardShellHeader>
+          <DashboardShellTitle>Roles & Permissions</DashboardShellTitle>
+          <DashboardShellDescription>
+            Manage application user roles and permissions
+          </DashboardShellDescription>
+        </DashboardShellHeader>
+      }
+    >
+      <RoleManagementTable />
+    </DashboardShell>
+  );
+}
+
+function LoadingComponent() {
+  return (
+    <DashboardShellSkeleton
+      header={
+        <DashboardShellHeader>
+          <DashboardShellTitleSkeleton />
+          <DashboardShellDescriptionSkeleton />
+        </DashboardShellHeader>
+      }
+    >
+      <DataTableSkeleton>
+        <DataTableToolbarSkeleton />
+      </DataTableSkeleton>
+    </DashboardShellSkeleton>
+  );
+}
