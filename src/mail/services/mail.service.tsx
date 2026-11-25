@@ -19,6 +19,8 @@ import {
   type EmailVerificationMailProps,
   NewDeviceLoginMail,
   type NewDeviceLoginMailProps,
+  NotificationMail,
+  type NotificationMailProps,
   PasswordChangedMail,
   type PasswordChangedMailProps,
   ResetPasswordMail,
@@ -70,6 +72,10 @@ export interface IMailService extends IQueueMailService {
 
   sendAccountLockedMail: (
     options: MailTemplateOptions<AccountLockedMailProps>
+  ) => Promise<QueueMailResult>;
+
+  sendNotificationMail: (
+    options: MailTemplateOptions<NotificationMailProps>
   ) => Promise<QueueMailResult>;
 }
 
@@ -257,6 +263,26 @@ export class MailService extends QueueMailService implements IMailService {
       to,
       `Your ${this.mailConfig.appName} account has been locked`,
       <AccountLockedMail
+        appName={this.mailConfig.appName}
+        supportMail={this.mailConfig.supportMail}
+        {...options}
+      />,
+      true,
+      options
+    );
+  }
+
+  public async sendNotificationMail({
+    to,
+    ...options
+  }: MailTemplateOptions<NotificationMailProps>): Promise<QueueMailResult> {
+    return this.sendMailTemplate(
+      `${APP_NAME} <${this.mailConfig.systemMail}>`,
+      to,
+      // The notification title is the subject: it is what the user already
+      // saw in-app, so the mail is recognisable in the inbox.
+      options.title,
+      <NotificationMail
         appName={this.mailConfig.appName}
         supportMail={this.mailConfig.supportMail}
         {...options}
