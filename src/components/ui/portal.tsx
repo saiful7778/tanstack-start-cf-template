@@ -5,11 +5,18 @@ import { cn } from "cn";
 
 interface PortalProps extends React.ComponentProps<"div"> {
   container?: Element | DocumentFragment | null;
+  /**
+   * Freeze the page behind the portal. Screens should keep this on; a small
+   * non-modal overlay must opt out or it disables scrolling for the whole app.
+   * @default true
+   */
+  lockScroll?: boolean;
 }
 
 function Portal({
   className,
   container: containerProp,
+  lockScroll = true,
   ...props
 }: PortalProps) {
   const [mounted, setMounted] = useState(false);
@@ -18,6 +25,8 @@ function Portal({
     queueMicrotask(() => {
       setMounted(true);
     });
+
+    if (!lockScroll) return;
 
     const originalStyle = window.getComputedStyle(document.body).overflow;
     const scrollbarWidth =
@@ -33,7 +42,7 @@ function Portal({
       document.body.style.overflow = originalStyle;
       document.body.style.paddingRight = originalPaddingRight;
     };
-  }, []);
+  }, [lockScroll]);
 
   const container =
     containerProp ?? (mounted ? globalThis.document.body : null);
