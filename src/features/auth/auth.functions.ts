@@ -1,6 +1,7 @@
 import { DEFAULT_AUTH_PATH, DEFAULT_UNAUTH_PATH } from "#/constants";
 import type { PermissionType } from "#/db/seed/permission.seed";
 import { db } from "#/lib/db.server";
+import { authLog } from "#/lib/logger.server";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
@@ -66,7 +67,7 @@ export const requireSessions = createServerFn({ method: "GET" }).handler(
     try {
       return await getSessionContext();
     } catch (error) {
-      console.error("[auth] failed to resolve the current session", error);
+      authLog.error({ err: error }, "auth.session.resolve_failed");
       throw error;
     }
   }

@@ -4,6 +4,7 @@ import {
   defaultStreamHandler,
 } from "@tanstack/react-start/server";
 
+import { queueLog } from "./lib/logger.server";
 import { bindMailQueue } from "./mail";
 
 const startHandler = createStartHandler(defaultStreamHandler);
@@ -26,7 +27,7 @@ export default {
       }
 
       default:
-        console.warn("Unknown queue:", batch.queue);
+        queueLog.warn({ queue: batch.queue }, "queue.unknown");
         break;
     }
   },

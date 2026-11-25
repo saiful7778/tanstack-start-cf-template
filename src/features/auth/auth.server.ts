@@ -16,6 +16,7 @@ import {
 } from "#/db/schemas";
 import { RoleEnumSchema } from "#/db/schemas/enums/zod-db-enums";
 import { db } from "#/lib/db.server";
+import { authLog } from "#/lib/logger.server";
 import { parseUserAgent } from "#/utils/device-fingerprint";
 import { getIp } from "#/utils/getIp";
 import { APIError, betterAuth, type BetterAuthPlugin } from "better-auth";
@@ -144,7 +145,10 @@ function createAuth() {
                 userAgent: session.userAgent,
               });
             } catch (error) {
-              console.error(`Failed to record logout activity: ${error}`);
+              authLog.error(
+                { err: error, sessionId: session.id },
+                "auth.logout.activity_failed"
+              );
             }
           },
         },
