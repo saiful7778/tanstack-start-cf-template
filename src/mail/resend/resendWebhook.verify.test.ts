@@ -59,12 +59,20 @@ describe("getResendClient", () => {
 });
 
 describe("module import", () => {
-  it("does not need an API key to be imported", async () => {
-    envMock.RESEND_API_KEY = undefined;
-    vi.resetModules();
+  it(
+    "does not need an API key to be imported",
+    async () => {
+      envMock.RESEND_API_KEY = undefined;
+      vi.resetModules();
 
-    await expect(import("./index")).resolves.toBeDefined();
-  });
+      await expect(import("./index")).resolves.toBeDefined();
+    },
+    // Importing the barrel instantiates the whole schema graph, which measures
+    // ~0.5s on its own and can pass the 5s default when the whole suite runs
+    // in parallel. This asserts the import *succeeds*, not that it is fast, so
+    // a generous bound keeps the regression guard without flaking.
+    30_000
+  );
 });
 
 describe("verifyResendWebhook", () => {

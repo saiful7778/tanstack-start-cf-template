@@ -12,6 +12,9 @@ export default defineConfig({
   plugins: [viteReact()],
   resolve: {
     tsconfigPaths: true,
+    alias: {
+      "cloudflare:workers": path.resolve(dirname, "test/cloudflare-workers.ts"),
+    },
   },
   test: {
     coverage: {
