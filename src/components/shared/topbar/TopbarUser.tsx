@@ -6,6 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu";
 import { DEFAULT_UNAUTH_PATH } from "#/constants";
@@ -18,7 +21,15 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import { createClientOnlyFn } from "@tanstack/react-start";
-import { LogOut, UserRound } from "lucide-react";
+import {
+  KeyRound,
+  LogOut,
+  MonitorSmartphone,
+  Plug,
+  Settings,
+  UserRound,
+  UserRoundPen,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 export function TopbarUser() {
@@ -86,6 +97,38 @@ export function TopbarUser() {
             <UserRound />
             <span>Profile</span>
           </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Settings />
+              <span>Settings</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem
+                render={<Link to="/dashboard/settings/profile" />}
+              >
+                <UserRoundPen />
+                <span>Edit profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<Link to="/dashboard/settings/update-password" />}
+              >
+                <KeyRound />
+                <span>Update password</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<Link to="/dashboard/settings/sessions" />}
+              >
+                <MonitorSmartphone />
+                <span>Sessions</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<Link to="/dashboard/settings/connected-apps" />}
+              >
+                <Plug />
+                <span>Connected apps</span>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
