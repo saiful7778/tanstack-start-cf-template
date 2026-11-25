@@ -3,6 +3,8 @@ import { Topbar } from "#/components/shared/topbar";
 import { SidebarInset, SidebarProvider } from "#/components/ui/sidebar";
 import { DEFAULT_UNAUTH_PATH } from "#/constants";
 import { RoleEnumSchema } from "#/db/schemas/enums/zod-db-enums";
+import { NotificationPermissionProvider } from "#/features/notification/components/providers/NotificationPermissionProvider";
+import { NotificationRealtimeProvider } from "#/features/notification/components/providers/NotificationRealtimeProvider";
 import { AuthStoreProvider } from "#/zustand/auth/AuthStoreContext";
 import { useSettingStore } from "#/zustand/setting/settingStore";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
@@ -52,15 +54,19 @@ function RouteComponent() {
       roles={roles}
       isAdminUser={isAdminUser}
     >
-      <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <AppSidebar />
-        <SidebarInset>
-          <Topbar />
-          <main className="min-h-[calc(100vh-125px)] flex-1">
-            <Outlet />
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
+      <NotificationPermissionProvider>
+        <NotificationRealtimeProvider>
+          <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <AppSidebar />
+            <SidebarInset>
+              <Topbar />
+              <main className="min-h-[calc(100vh-125px)] flex-1">
+                <Outlet />
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
+        </NotificationRealtimeProvider>
+      </NotificationPermissionProvider>
     </AuthStoreProvider>
   );
 }

@@ -5,12 +5,18 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 const STORAGE_KEY = "settings";
 
 export interface SettingState {
+  notification: {
+    promptDismissed: boolean;
+  };
   sidebar: {
     open: boolean;
   };
 }
 
 export interface SettingAction {
+  dismissNotificationPrompt: () => void;
+  setNotificationPromptDismissed: (dismissed: boolean) => void;
+  resetNotificationPrompt: () => void;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebarOpen: () => void;
 }
@@ -18,6 +24,9 @@ export interface SettingAction {
 export type SettingStore = SettingState & SettingAction;
 
 const initialState: SettingState = {
+  notification: {
+    promptDismissed: false,
+  },
   sidebar: {
     open: true,
   },
@@ -28,6 +37,33 @@ export const useSettingStore = create<SettingStore>()(
     persist(
       (set) => ({
         ...initialState,
+        dismissNotificationPrompt: () =>
+          set(
+            (state) => ({
+              notification: { ...state.notification, promptDismissed: true },
+            }),
+            false,
+            `${STORAGE_KEY}/dismissNotificationPrompt`
+          ),
+        setNotificationPromptDismissed: (dismissed) =>
+          set(
+            (state) => ({
+              notification: {
+                ...state.notification,
+                promptDismissed: dismissed,
+              },
+            }),
+            false,
+            `${STORAGE_KEY}/setNotificationPromptDismissed`
+          ),
+        resetNotificationPrompt: () =>
+          set(
+            (state) => ({
+              notification: { ...state.notification, promptDismissed: false },
+            }),
+            false,
+            `${STORAGE_KEY}/resetNotificationPrompt`
+          ),
         setSidebarOpen: (open) =>
           set(
             (state) => ({

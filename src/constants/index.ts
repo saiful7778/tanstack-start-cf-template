@@ -28,6 +28,10 @@ export const breadcrumbRoutes: Array<BreadcrumbRouteType> = [
         path: "/dashboard/roles",
       },
       {
+        title: "Notifications",
+        path: "/dashboard/notifications",
+      },
+      {
         title: "Profile",
         path: "/dashboard/profile",
       },
@@ -50,6 +54,10 @@ export const breadcrumbRoutes: Array<BreadcrumbRouteType> = [
           {
             title: "Connected Apps",
             path: "/dashboard/settings/connected-apps",
+          },
+          {
+            title: "Notifications",
+            path: "/dashboard/settings/notification",
           },
         ],
       },

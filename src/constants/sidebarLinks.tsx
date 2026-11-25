@@ -81,4 +81,8 @@ export const settingsMenuLinks: Array<{ title: string; path: RoutePathType }> =
       title: "Connected Apps",
       path: "/dashboard/settings/connected-apps",
     },
+    {
+      title: "Notifications",
+      path: "/dashboard/settings/notification",
+    },
   ];
